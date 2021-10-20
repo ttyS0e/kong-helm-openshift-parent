@@ -166,5 +166,5 @@ Then, you can access the Kong Manager UI at: `https://manager.kong.mydomain.tld`
 # Limitations
 
 - If you want to run the Kong Admin API and the Kong Manager UI on the same router, but at different hostnames, in pass-through mode (e.g. https://manager.konghq.com and https://api.konghq.com) then **you need to provision separate certificates for each URL** - wildcards will **not work**
-- The Kong Ingress Controller cannot be installed on OpenShift yet, because the service account is unable to get permissions to watch multiple projects (namespaces)
+- The Kong Ingress Controller cannot be installed on OpenShift 3.6-3.11 yet, because the service account is unable to get permissions to watch multiple projects (namespaces)
 - UDP routes are not supported over the OpenShift Router - you'll have to manually create an OpenShift Service on a free NodePort, and manually provision some UDP load balancer product (AWS NLB for example)
