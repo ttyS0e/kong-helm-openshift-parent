@@ -1,1 +1,15 @@
-# comment
+apiVersion: v1
+description: Wrapper for Kong Enterprise installation on OpenShift
+engine: gotpl
+home: https://konghq.com/
+icon: https://s3.amazonaws.com/downloads.kong/universe/assets/icon-kong-inc-large.png
+maintainers:
+- name: ttys0e
+  email: jack.tysoe@konghq.com
+name: kong-oshift
+version: 1.0.0
+appVersion: 2.6.0
+dependencies:
+- name: kong
+  version: 2.5.0  # this is the Kong Enterprise 2.6.0 Helm Chart
+  repository: https://charts.konghq.com
