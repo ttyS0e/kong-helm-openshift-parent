@@ -16,10 +16,8 @@ spec:
   host: {{ .Values.openshift.routes.clustertelemetry.hostname | default "" | quote }}
   port:
     targetPort: "kong-clustertelemetry-tls"
-{{ if .Values.openshift.routes.clustertelemetry.tls.enabled }}
   tls:
-    termination: {{ .Values.openshift.routes.clustertelemetry.tls.termination | default "passthrough" | quote }}
-{{ end }}
+    termination: "passthrough"
   to:
     kind: Service
     name: {{ .Release.Name }}-kong-clustertelemetry

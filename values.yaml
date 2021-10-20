@@ -10,10 +10,17 @@ openshift:
       tls:
         enabled: true
         termination: edge
-    clustertelemetry:
+    portal:
       enabled: false
       tls:
         enabled: true
-        termination: passthrough
+        termination: edge
+    portalapi:
+      enabled: false
+      tls:
+        enabled: true
+        termination: edge
+    clustertelemetry:
+      enabled: false
     cluster:
       enabled: false
