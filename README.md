@@ -109,7 +109,15 @@ helm install -f kong-values.yaml --namespace kong --skip-crds --set ingressContr
 
 There are OpenShift-specific objects in this parent chart, that help in the installation and management of Kong.
 
-These have their own specific configuration values, which can be customised:
+These have their own specific configuration values, which can be customised. For each one, replace `{i}` with any of the following features:
+
+- admin
+- manager
+- proxy
+- portal
+- portalapi
+- cluster
+- clustertelemetry
 
 | Value                                | Description                                                                                                                                                                                           | Type    | Default | Example                       |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|---------|-------------------------------|
