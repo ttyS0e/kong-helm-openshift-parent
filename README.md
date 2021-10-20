@@ -4,21 +4,19 @@ Parent Helm chart, which subcharts the Kong official one, for proper installatio
 
 This chart wraps the [existing Kong Helm chart](https://github.com/Kong/charts/tree/main/charts/kong).
 
+> :warning: This has been tested exclusively with **Helm 3.7** - this is the recommended version unless it is otherwise impossible to change your Helm installation.
+
 # Pre-Installation
 
 **Before** installing the chart, you should follow the same instructions [in that chart's README](https://github.com/Kong/charts/blob/main/charts/kong/README.md), including setting up cluster certificates and licenses if necessary, and then return here for final steps.
 
-Create a `kong-values.yaml` file as described in the Kong Helm chart's README.
+Create a `kong-values.yaml` file as described in the Kong Helm chart's README, but bear in mind the following required changes...
 
-# Installation
-
-## Sub-Chart Values
+## Changes to Sub-Chart Values
 
 This installation uses the Kong chart as a [subchart](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/).
 
-You need to alter your configuration values to have them applied to the subchart instead.
-
-To do this:
+You need to alter your configuration values to have them applied to the subchart instead. To do this:
 
 ### Inline Settings
 
@@ -41,6 +39,12 @@ For all values in a values YAML file, e.g:
 ```yaml
 cluster:
   enabled: true
+  tls:
+    enabled: true
+    servicePort: 8005
+    containerPort: 8005
+...
+...
 ```
 
 you must indent the entire block, under the root object 'kong', like this:
@@ -49,14 +53,17 @@ you must indent the entire block, under the root object 'kong', like this:
 kong:
   cluster:
     enabled: true
+    tls:
+      enabled: true
+      servicePort: 8005
+      containerPort: 8005
+  ...
+  ...
 ```
 
-## Install the Chart
+# Install the Chart
 
-> :warning: When installing on OpenShift or OKD, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments:
-```sh
---skip-crds --set ingressController.installCRDs=false
-```
+> :warning: When installing on OpenShift or OKD, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments: `sh --skip-crds --set ingressController.installCRDs=false`
 
 **1. Login to OpenShift as a cluster administrator, or other privileged user:**
 ```sh
@@ -84,9 +91,14 @@ git clone https://github.com/ttyS0e/kong-helm-openshift-parent.git
 cd kong-helm-openshift-parent
 ```
 
-**6. Create/copy your configuration values file `kong-values.yaml` from the pre-installation into this directory**
+**6. Load the dependent charts**
+```sh
+helm dependency update
+```
 
-**7. Install the chart:**
+**7. Create/copy your configuration values file `kong-values.yaml` from the pre-installation into this directory**
+
+**8. Install the chart:**
 ```sh
 helm install -f kong-values.yaml --namespace kong --skip-crds --set ingressController.installCRDs=false --generate-name .
 ```
