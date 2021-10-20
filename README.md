@@ -63,7 +63,7 @@ kong:
 
 # Install the Chart
 
-> :warning: When installing on OpenShift or OKD, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments: `sh --skip-crds --set ingressController.installCRDs=false`
+> :warning: When installing on OpenShift or OKD, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments: `--skip-crds --set ingressController.installCRDs=false`
 
 **1. Login to OpenShift as a cluster administrator, or other privileged user:**
 ```sh
@@ -109,3 +109,8 @@ There are OpenShift-specific objects in this parent chart, that help in the inst
 
 These have their own specific configuration values, which can be customised:
 
+# Limitations
+
+- If you want to run the Kong Admin API and the Kong Manager UI on the same router, but at different hostnames, in pass-through mode (e.g. https://manager.konghq.com and https://api.konghq.com) then **you need to provision separate certificates for each URL** - wildcards will **not work**
+- The Kong Ingress Controller cannot be installed on OpenShift yet, because the service account is unable to get permissions to watch multiple projects (namespaces)
+- UDP routes are not supported over the OpenShift Router - you'll have to manually create an OpenShift Service on a free NodePort, and manually provision some UDP load balancer product (AWS NLB for example)

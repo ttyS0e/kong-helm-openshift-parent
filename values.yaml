@@ -1,4 +1,19 @@
-routes:
-  manager:
-    tls:
-      enabled: true
+openshift:
+  routes:
+    manager:
+      enabled: false
+      tls:
+        enabled: true
+        termination: edge
+    admin:
+      enabled: false
+      tls:
+        enabled: true
+        termination: edge
+    clustertelemetry:
+      enabled: false
+      tls:
+        enabled: true
+        termination: passthrough
+    cluster:
+      enabled: false

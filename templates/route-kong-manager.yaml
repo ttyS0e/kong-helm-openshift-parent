@@ -1,5 +1,6 @@
 {{- if .Values.kong.deployment.kong.enabled }}
 {{- if .Values.kong.enterprise.enabled }}
+{{- if .Values.openshift.routes.manager.enabled }}
 {{- if and .Values.kong.manager.enabled (or .Values.kong.manager.http.enabled .Values.kong.manager.tls.enabled) -}}
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -8,23 +9,24 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kong
-    app.kubernetes.io/version: '2.6'
-    helm.sh/chart: kong-2.5.0
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}
   name: {{ .Release.Name }}-kong-manager
   namespace: {{ .Release.Namespace }}
 spec:
-  host: {{ .Values.routes.manager.hostname | default "" | quote }}
+  host: {{ .Values.openshift.routes.manager.hostname | default "" | quote }}
   port:
-    targetPort: kong-manager-tls
-{{ if .Values.routes.manager.tls.enabled }}
+    targetPort: {{ if and (.Values.openshift.routes.manager.tls.enabled) (eq .Values.openshift.routes.manager.tls.termination "edge") }}"kong-manager"{{ else }}kong-manager-tls{{- end }}
+{{- if .Values.openshift.routes.manager.tls.enabled }}
   tls:
-    termination: {{ .Values.routes.manager.tls.termination | default "edge" | quote }}
-{{ end }}
+    termination: {{ .Values.openshift.routes.manager.tls.termination | default "edge" | quote }}
+{{- end }}
   to:
     kind: Service
     name: {{ .Release.Name }}-kong-manager
     weight: 100
   wildcardPolicy: None
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

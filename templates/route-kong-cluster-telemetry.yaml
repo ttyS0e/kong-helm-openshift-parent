@@ -1,0 +1,30 @@
+{{- if .Values.kong.deployment.kong.enabled }}
+{{- if .Values.openshift.routes.clustertelemetry.enabled }}
+{{- if .Values.kong.clustertelemetry.enabled -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}
+  name: {{ .Release.Name }}-kong-clustertelemetry
+  namespace: {{ .Release.Namespace }}
+spec:
+  host: {{ .Values.openshift.routes.clustertelemetry.hostname | default "" | quote }}
+  port:
+    targetPort: "kong-clustertelemetry-tls"
+{{ if .Values.openshift.routes.clustertelemetry.tls.enabled }}
+  tls:
+    termination: {{ .Values.openshift.routes.clustertelemetry.tls.termination | default "passthrough" | quote }}
+{{ end }}
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-kong-clustertelemetry
+    weight: 100
+  wildcardPolicy: None
+{{- end -}}
+{{- end -}}
+{{- end -}}
