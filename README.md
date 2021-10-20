@@ -103,11 +103,57 @@ helm dependency update
 helm install -f kong-values.yaml --namespace kong --skip-crds --set ingressController.installCRDs=false --generate-name .
 ```
 
-# Extra Configuration
+# Extra OpenShift Features
+
+> :warning: Remember that if you are exposing the admin API, manager UI, portal, or portal API using OpenShift Routes, you need to set their corresponding "kong.env.*" parameter too! See the table for reference.
 
 There are OpenShift-specific objects in this parent chart, that help in the installation and management of Kong.
 
 These have their own specific configuration values, which can be customised:
+
+| Value                                | Description                                                                                                                                                                                           | Type    | Default | Example                       |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|---------|-------------------------------|
+| openshift.routes.{i}.enabled         | Creates an OpenShift route for the given service. By default, this uses the router's hostname and certificate, and terminates TLS, passing through to the equivalent plaintext port on the container. | boolean | `false` | `true`                        |
+| openshift.routes.{i}.tls.enabled     | Whether TLS is enabled on the OpenShift route. This is mostly `true` by default, but in some cases can be changed to force plaintext HTTP connections.                                                | boolean | `true`  | `true`                        |
+| openshift.routes.{i}.tls.termination | OpenShift TLS termination strategy - for most routes, this can be customised. Choices are `edge`, `passthrough`, `reencrypt`.                                                                         | string  | `edge`  | `passthrough`                 |
+| openshift.routes.{i}.hostname        | Custom hostname to use for the route.                                                                                                                                                                 | string  | `""`    | `"portal-api.mydomain.mytld"` |
+
+## Example Block
+
+To configure custom route hostnames and certificates to manage Kong API, set up the following in the values YAML file:
+
+```yaml
+openshift:
+  routes:
+    manager:
+      enabled: true
+      hostname: "manager.kong.mydomain.tld"
+      tls:
+        termination: "passthrough"
+    admin:
+      enabled: true
+      hostname: "admin-api.kong.mydomain.tld"
+      tls:
+        termination: "passthrough"
+kong:
+  env:
+    admin_api_uri: "https://admin-api.kong.mydomain.tld"
+    admin_gui_url: "https://manager.kong.mydomain.tld"
+    admin_ssl_cert: "/etc/secrets/kong-ssl-cert/api-cert"
+    admin_ssl_cert_key: "/etc/secrets/kong-ssl-cert/api-key"
+    admin_gui_ssl_cert: "/etc/secrets/kong-ssl-cert/manager-cert"
+    admin_gui_ssl_cert_key: "/etc/secrets/kong-ssl-cert/manager-key"
+  secretVolumes:
+  - kong-ssl-cert
+```
+
+Ensure you have these custom certificates created in the `kong` Project already:
+
+```sh
+oc create secret generic kong-ssl-cert --from-file=api-cert=./admin-api.kong.mydomain.tld.pem --from-file=api-key=./admin-api.kong.mydomain.tld.key --from-file=manager-cert=./manager.kong.mydomain.tld.pem --from-file=manager-key=./manager.kong.mydomain.tld.key
+```
+
+Then, you can access the Kong Manager UI at: `https://manager.kong.mydomain.tld` (if your DNS points to the OpenShift Router load balancer).
 
 # Limitations
 
