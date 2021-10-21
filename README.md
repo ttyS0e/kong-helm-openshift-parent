@@ -63,7 +63,7 @@ kong:
 
 # Install the Chart
 
-> :warning: When installing on OpenShift or OKD, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments: `--skip-crds --set ingressController.installCRDs=false`
+> :warning: When installing on OpenShift 3.6-3.11, you **must disable custom resource definitions globally**. To do this, during an installation you just need to add the follow command arguments: `--skip-crds --set ingressController.installCRDs=false`
 
 **1. Login to OpenShift as a cluster administrator, or other privileged user:**
 ```sh
