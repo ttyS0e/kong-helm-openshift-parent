@@ -11,5 +11,5 @@ version: 1.0.2-DEVEL
 appVersion: 2.6.0
 dependencies:
 - name: kong
-  version: 2.5.0  # this is the Kong Enterprise 2.6.0 Helm Chart
+  version: 2.6.3  # this is the Kong Enterprise 2.6.0 Helm Chart
   repository: https://charts.konghq.com
